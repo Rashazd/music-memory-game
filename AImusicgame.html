@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Color Light Game</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.1.4/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .box {
+            width: 200px;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .green {
+            background-color: green;
+        }
+        
+        .yellow {
+            background-color: yellow;
+        }
+        
+        .red {
+            background-color: red;
+        }
+        
+        .blue {
+            background-color: blue;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-200 flex justify-center items-center h-screen">
+    <div class="card bg-white p-8 shadow-md rounded-lg">
+        <h1 class="text-2xl mb-4">Memory Color Light Game</h1>
+        <div class="grid grid-cols-2 gap-4">
+            <div id="green-box" class="box green"></div>
+            <div id="yellow-box" class="box yellow"></div>
+            <div id="red-box" class="box red"></div>
+            <div id="blue-box" class="box blue"></div>
+        </div>
+        <button id="start-button" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Start
+        </button>
+    </div>
+
+    <script>
+        const boxes = ['green', 'yellow', 'red', 'blue'];
+        let sequence = [];
+        let userSequence = [];
+        let level = 0;
+        let gameStarted = false;
+
+        function generateRandomSequence() {
+            sequence.push(boxes[Math.floor(Math.random() * boxes.length)]);
+        }
+
+        function lightUpBox(box) {
+            document.getElementById(box + '-box').classList.add('opacity-75');
+            setTimeout(() => {
+                document.getElementById(box + '-box').classList.remove('opacity-75');
+            }, 3000);
+        }
+
+        function playSequence() {
+            let i = 0;
+            const intervalId = setInterval(() => {
+                lightUpBox(sequence[i]);
+                i++;
+                if (i >= sequence.length) {
+                    clearInterval(intervalId);
+                    gameStarted = true;
+                }
+            }, 4000);
+        }
+
+        function checkUserSequence() {
+            for (let i = 0; i < userSequence.length; i++) {
+                if (userSequence[i] !== sequence[i]) {
+                    endGame();
+                    return;
+                }
+            }
+            if (userSequence.length === sequence.length) {
+                level++;
+                userSequence = [];
+                generateRandomSequence();
+                setTimeout(() => {
+                    playSequence();
+                }, 1000);
+            }
+        }
+
+        function endGame() {
+            alert('Game Over! Your score: ' + level);
+            sequence = [];
+            userSequence = [];
+            level = 0;
+            gameStarted = false;
+        }
+
+        document.getElementById('start-button').addEventListener('click', () => {
+            if (!gameStarted) {
+                generateRandomSequence();
+                playSequence();
+            }
+        });
+
+        document.getElementById('green-box').addEventListener('click', () => {
+            if (gameStarted) {
+                userSequence.push('green');
+                checkUserSequence();
+            }
+        });
+
+        document.getElementById('yellow-box').addEventListener('click', () => {
+            if (gameStarted) {
+                userSequence.push('yellow');
+                checkUserSequence();
+            }
+        });
+
+        document.getElementById('red-box').addEventListener('click', () => {
+            if (gameStarted) {
+                userSequence.push('red');
+                checkUserSequence();
+            }
+        });
+
+        document.getElementById('blue-box').addEventListener('click', () => {
+            if (gameStarted) {
+                userSequence.push('blue');
+                checkUserSequence();
+            }
+        });
+    </script>
+</body>
+
+</html>
